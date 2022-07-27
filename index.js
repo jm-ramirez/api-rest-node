@@ -19,6 +19,25 @@ app.use(cors());
 app.use(express.json());
 
 //Create routes
+app.get('/testing', (req, res) => {
+    console.log('se ha ejecutado');
+    return res.status(200).json([{
+        course: 'Api rest node',
+        autor: 'Juan Manuel Ramirez',
+        url: 'juanmanuel.com'
+    },
+    {
+        course: 'Api rest node',
+        autor: 'Juan Manuel Ramirez',
+        url: 'juanmanuel.com'
+    }]);
+});
+
+app.get('/', (req, res) => {
+    return res.status(200).send(
+        `<h1>Starting to create a rest api with node.</h1>`
+    )
+});
 
 //Create server and listen http requests
 app.listen(port, () => {
