@@ -19,6 +19,12 @@ app.use(cors());
 app.use(express.json());
 
 //Create routes
+const routes_article = require('./routes/article');
+
+//load the routes
+app.use('/api', routes_article);
+
+//Hardcoded test routes
 app.get('/testing', (req, res) => {
     console.log('se ha ejecutado');
     return res.status(200).json([{
