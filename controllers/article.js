@@ -227,6 +227,39 @@ const image = (req, res) =>{
 
 };
 
+const search = (req, res) => {
+    //Get the search string
+    let search =req.params.search;
+
+    //Find OR 
+    Article.find({ "$or": [
+        { 'title': { '$regex': search, '$options': 'i' } },
+        { 'content': { '$regex': search, '$options': 'i' } },
+    ]})
+    .sort({ date: -1 })
+    .exec((error, foundArticles) => {
+        if(error || !foundArticles || foundArticles.length <= 0){
+            return res.status(404).json({
+                status: 'error',
+                message: 'No articles found'
+            })
+        }
+
+        return res.status(200).json({
+            status: 'success',
+            foundArticles
+
+        })
+    })
+
+
+    //Order 
+
+    //Execute query
+
+    //Return result
+}
+
 module.exports = {
     test,
     course,
@@ -236,5 +269,6 @@ module.exports = {
     deleteArticle,
     editArticle,
     upload,
-    image
+    image,
+    search
 }

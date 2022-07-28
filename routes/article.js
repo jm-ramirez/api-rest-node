@@ -27,5 +27,6 @@ router.delete('/article/:id', ArticleController.deleteArticle);
 router.put('/article/:id', ArticleController.editArticle);
 router.post('/upload-image/:id', [uploaded.single('file')], ArticleController.upload);
 router.get('/image/:file', ArticleController.image);
+router.get('/search/:search', ArticleController.search);
 
 module.exports = router;
