@@ -9,6 +9,6 @@ router.get('/test-course', ArticleController.course);
 
 //useful route
 router.post('/create', ArticleController.create);
-router.get('/list', ArticleController.list);
+router.get('/list/:latest?', ArticleController.list);
 
 module.exports = router;

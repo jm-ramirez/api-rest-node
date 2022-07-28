@@ -66,7 +66,13 @@ const create = (req, res) => {
 };
 
 const list = (req, res) => {
-    let query = Article.find({}).exec((error, articles) => {
+    let query = Article.find({});
+
+    if(req.params.latest){
+        query.limit(1);
+    }
+
+    query.sort({date: -1}).exec((error, articles) => {
         if(error || !articles){
             return res.status(400).json({
                 status: 'error',
@@ -76,6 +82,7 @@ const list = (req, res) => {
 
         return res.status(200).send({
             status: 'success',
+            count: articles.length,
             articles
         })
     });
