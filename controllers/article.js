@@ -1,3 +1,6 @@
+const validator = require('validator');
+const Article = require('../models/Article');
+
 const test = (req, res) => {
     return res.status(200).json({
         message: 'I am a test action in my item controller'
@@ -18,7 +21,52 @@ const course = (req, res) => {
     }]);
 };
 
+const create = (req, res) => {
+    //Get parameters by post to save
+    let parameters = req.body;
+
+    //Validate data
+    try {
+        let validate_title = !validator.isEmpty(parameters.title) &&
+                             validator.isLength(parameters.title, {min: 5, max: undefined});
+        let validate_content = !validator.isEmpty(parameters.content);
+
+        if(!validate_title || !validate_content){
+            throw new Error('The information has not been validated!');
+        }
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Missing data to send'
+        })
+    }
+
+    //Create object to save
+    const article = new Article(parameters);
+
+    //Assign values ​​to object based on the model (manual or automatic)
+    
+
+    //Save article in database
+    article.save((error, articleSaved) => {
+        if(error || !articleSaved){
+            return res.status(400).json({
+                status: 'error',
+                message: 'The article has not been saved'
+            })
+        }
+
+        //Return result
+        return res.status(200).json({
+            status: 'success',
+            article: articleSaved,
+            message: 'Article created successfully'
+        })
+    });
+};
+
 module.exports = {
     test,
-    course
+    course,
+    create
 }

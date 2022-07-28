@@ -16,7 +16,8 @@ const port = 3900;
 app.use(cors());
 
 //Convert body to js object
-app.use(express.json());
+app.use(express.json()); //receive data with content-type app/json
+app.use(express.urlencoded({extended:true})); // receive data with urlencoded
 
 //Create routes
 const routes_article = require('./routes/article');
