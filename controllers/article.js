@@ -65,8 +65,25 @@ const create = (req, res) => {
     });
 };
 
+const list = (req, res) => {
+    let query = Article.find({}).exec((error, articles) => {
+        if(error || !articles){
+            return res.status(400).json({
+                status: 'error',
+                message: 'No articles found'
+            })
+        }
+
+        return res.status(200).send({
+            status: 'success',
+            articles
+        })
+    });
+};
+
 module.exports = {
     test,
     course,
-    create
+    create,
+    list
 }
