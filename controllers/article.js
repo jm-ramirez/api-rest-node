@@ -1,6 +1,6 @@
 const { validateArticle } = require('../helpers/validate');
 const Article = require('../models/Article');
-
+const fs = require('fs');
 
 const test = (req, res) => {
     return res.status(200).json({
@@ -155,6 +155,45 @@ const editArticle = (req, res) => {
     })
 };
 
+const upload = (req, res) => {
+    //Cunfigure multer
+
+    //Get uploaded image file
+    if(!req.file && !req.file){
+        return res.status(404).json({
+            status: 'error',
+            message: 'Invalid request'
+        })
+    }
+
+    //Name of file
+    let fileName = req.file.originalname;
+
+    //file extension
+    let splitFile = fileName.split("\.");
+    let fileExtension = splitFile[1];
+    console.log(fileExtension);
+    //Validate extension
+    if(fileExtension !== 'png' && fileExtension !== 'jpg' && 
+       fileExtension !== 'jpeg' && fileExtension !== 'gif'){
+        // Delete file and give reponse
+        fs.unlink(req.file.path, (error) => {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Invalid image'
+            })
+        })
+    }else{
+        //Update article
+
+        return res.status(200).json({
+            status: 'success',
+            fileExtension,
+            files:req.file
+        })
+    }    
+}
+
 module.exports = {
     test,
     course,
@@ -162,5 +201,6 @@ module.exports = {
     list,
     one,
     deleteArticle,
-    editArticle
+    editArticle,
+    upload
 }
