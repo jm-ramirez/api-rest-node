@@ -21,7 +21,7 @@ const course = (req, res) => {
     }]);
 };
 
-const create = (req, res) => {
+const createArticle = (req, res) => {
     //Get parameters by post to save
     let parameters = req.body;
 
@@ -88,9 +88,52 @@ const list = (req, res) => {
     });
 };
 
+const one = (req, res) => {
+    //Get id by url
+    let id = req.params.id;
+
+    //Search article
+    Article.findById(id, (error, article) => {
+        //If it doesn't exist, return error
+        if(error || !article){
+            return res.status(400).json({
+                status: 'error',
+                message: 'No articles found'
+            })
+        }
+
+        //Return result
+        return res.status(200).json({
+            status: 'success',
+            article
+        })
+    });
+};
+
+const deleteArticle = (req, res) => {
+    let id = req.params.id;
+
+    Article.findOneAndDelete({_id: id}, (error, articleDeleted) => {
+        if(error || !articleDeleted){
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error deleting article'
+            })
+        }
+
+        return res.status(200).json({
+            status: 'success',
+            article: articleDeleted,
+            message: 'Article deleted'
+        })
+    });
+};
+
 module.exports = {
     test,
     course,
-    create,
-    list
+    createArticle,
+    list,
+    one,
+    deleteArticle
 }
