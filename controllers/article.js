@@ -1,5 +1,6 @@
-const validator = require('validator');
+const { validateArticle } = require('../helpers/validate');
 const Article = require('../models/Article');
+
 
 const test = (req, res) => {
     return res.status(200).json({
@@ -27,25 +28,16 @@ const createArticle = (req, res) => {
 
     //Validate data
     try {
-        let validate_title = !validator.isEmpty(parameters.title) &&
-                             validator.isLength(parameters.title, {min: 5, max: undefined});
-        let validate_content = !validator.isEmpty(parameters.content);
-
-        if(!validate_title || !validate_content){
-            throw new Error('The information has not been validated!');
-        }
+        validateArticle(parameters);   
     } catch (error) {
         return res.status(400).json({
             status: 'error',
             message: 'Missing data to send'
-        })
+        });
     }
 
     //Create object to save
     const article = new Article(parameters);
-
-    //Assign values ​​to object based on the model (manual or automatic)
-    
 
     //Save article in database
     article.save((error, articleSaved) => {
@@ -136,20 +128,14 @@ const editArticle = (req, res) => {
     //Get parameters by post to save
     let parameters = req.body;
 
-    //Get data of body
+    //Validate data
     try {
-        let validate_title = !validator.isEmpty(parameters.title) &&
-                             validator.isLength(parameters.title, {min: 5, max: undefined});
-        let validate_content = !validator.isEmpty(parameters.content);
-
-        if(!validate_title || !validate_content){
-            throw new Error('The information has not been validated!');
-        }
+        validateArticle(parameters);   
     } catch (error) {
         return res.status(400).json({
             status: 'error',
             message: 'Missing data to send'
-        })
+        });
     }
 
     //Search and update article
