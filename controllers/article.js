@@ -1,6 +1,7 @@
 const { validateArticle } = require('../helpers/validate');
 const Article = require('../models/Article');
 const fs = require('fs');
+const path = require('path');
 
 const test = (req, res) => {
     return res.status(200).json({
@@ -184,15 +185,47 @@ const upload = (req, res) => {
             })
         })
     }else{
-        //Update article
+        //Get article id
+        let id = req.params.id;
 
-        return res.status(200).json({
-            status: 'success',
-            fileExtension,
-            files:req.file
-        })
+        //Search and update article
+        Article.findOneAndUpdate({_id: id}, {image: req.file.filename}, { new: true }, (error, articleUpdated) => {
+            if(error || !articleUpdated){
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Failed to update'
+                });
+            }
+
+            //Return response
+            return res.status(200).json({
+                status: 'success',
+                article: articleUpdated,
+                file: req.file
+            })
+        });
     }    
-}
+};
+
+const image = (req, res) =>{
+    let file = req.params.file;
+    let url = `./images/articles/${file}`;
+
+    fs.stat(url, (error, exist) => {
+        if(exist){
+            return res.sendFile(path.resolve(url));
+        }else{
+            return res.status(404).json({
+                status: 'error',
+                message: 'The image does not exist',
+                exist,
+                file,
+                url
+            });
+        }
+    })
+
+};
 
 module.exports = {
     test,
@@ -202,5 +235,6 @@ module.exports = {
     one,
     deleteArticle,
     editArticle,
-    upload
+    upload,
+    image
 }
