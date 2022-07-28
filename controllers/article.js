@@ -129,11 +129,52 @@ const deleteArticle = (req, res) => {
     });
 };
 
+const editArticle = (req, res) => {
+    //Get article id
+    let id = req.params.id;
+
+    //Get parameters by post to save
+    let parameters = req.body;
+
+    //Get data of body
+    try {
+        let validate_title = !validator.isEmpty(parameters.title) &&
+                             validator.isLength(parameters.title, {min: 5, max: undefined});
+        let validate_content = !validator.isEmpty(parameters.content);
+
+        if(!validate_title || !validate_content){
+            throw new Error('The information has not been validated!');
+        }
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Missing data to send'
+        })
+    }
+
+    //Search and update article
+    Article.findOneAndUpdate({_id: id}, req.body, { new: true }, (error, articleUpdated) => {
+        if(error || !articleUpdated){
+            return res.status(500).json({
+                status: 'error',
+                message: 'Failed to update'
+            });
+        }
+
+        //Return response
+        return res.status(200).json({
+            status: 'success',
+            article: articleUpdated
+        })
+    })
+};
+
 module.exports = {
     test,
     course,
     createArticle,
     list,
     one,
-    deleteArticle
+    deleteArticle,
+    editArticle
 }
